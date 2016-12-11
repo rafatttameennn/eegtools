@@ -102,11 +102,12 @@ end
 function btn_cap_Callback(hObject, eventdata, handles)
 %%
 
-set(handles.btn_cap, 'CapState', []);
+global StopState;
+StopState = 0;
 
 % Initiate Neurosky Library
-maks = 307200;
-data = zeros(1,307200); %holder for 10 minutes EEG data
+maks = 10240;
+data = zeros(1,maks); %holder for 10 minutes EEG data
 
 portNum = 3;
 comPortName1 = sprintf('\\\\.\\COM%d', portNum);
@@ -117,7 +118,6 @@ loadlibrary('Thinkgear.dll');
 
 
 userInput = get(handles.sub_txtbox,'String');
-assignin('base',userInput,0);
 
 %%
 % Neurosky Connection Error Handling
@@ -172,16 +172,16 @@ while (i < maks)   %loop for 20 seconds
         j = 0;
     end
     
-    stopState = get(handles.btn_cap, 'CapState');
-    if ~isempty(stopState) && strcmp(stopState, 'stop')
-        userInput = total;
+    if StopState == 1
+        assignin('base', userInput, total);
         calllib('Thinkgear', 'TG_FreeConnection', connectionId1 );
         break;
     end
 
 end
 
-userInput = total; %return value of data
+assignin('base', userInput, total);
+calllib('Thinkgear', 'TG_FreeConnection', connectionId1 );
 
 
 % --- Executes on button press in btn_disconnect.
@@ -189,8 +189,8 @@ function btn_disconnect_Callback(hObject, eventdata, handles)
 % hObject    handle to btn_disconnect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+global StopState;
+StopState = 1;
 
-set(handles.btn_cap, 'CapState', 'stop');
 
-%disconnect           
-calllib('Thinkgear', 'TG_FreeConnection', connectionId1 );
+function error_check(

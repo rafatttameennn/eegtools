@@ -118,7 +118,6 @@ loadlibrary('Thinkgear.dll');
 
 
 userInput = get(handles.sub_txtbox,'String');
-assignin('base',userInput,0);
 
 %%
 % Neurosky Connection Error Handling
@@ -174,14 +173,14 @@ while (i < maks)   %loop for 20 seconds
     end
     
     if StopState == 1
-        userInput = total;
+        assignin('base', userInput, total);
         calllib('Thinkgear', 'TG_FreeConnection', connectionId1 );
         break;
     end
 
 end
 
-userInput = total; %return value of data
+assignin('base', userInput, total);
 calllib('Thinkgear', 'TG_FreeConnection', connectionId1 );
 
 
