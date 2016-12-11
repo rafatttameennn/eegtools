@@ -2,3 +2,4 @@ dataLog.txt
 streamLog.txt
 modPlotRaw.m
 modReadRaw.m
+*.mat
